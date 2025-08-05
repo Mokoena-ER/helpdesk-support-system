@@ -1,13 +1,14 @@
 package com.helpdesk.support_system.user.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
 public class Ticket {
 
     @Id
@@ -16,6 +17,18 @@ public class Ticket {
 
     private String subject;
     private String description;
-    private Set<Status> status;
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ElementCollection(targetClass = Status.class, fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "ticket_status",
+            joinColumns = @JoinColumn(name = "ticket_id")
+    )
+    @Column(name = "status", length = (20))
+    private Set<Status> status = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User createdBy;
 
 }
