@@ -1,7 +1,7 @@
 package com.helpdesk.support_system.user.service;
 
-import com.helpdesk.support_system.user.dto.UserPromoted;
-import com.helpdesk.support_system.user.dto.UserPromotion;
+import com.helpdesk.support_system.user.dto.UserPromoResponse;
+import com.helpdesk.support_system.user.dto.UserPromoRequest;
 import com.helpdesk.support_system.user.dto.UserRequest;
 import com.helpdesk.support_system.user.dto.UserResponse;
 import com.helpdesk.support_system.user.mapper.UserMapper;
@@ -24,25 +24,21 @@ public class UserService {
 
     public UserResponse register(UserRequest request, Set<Roles> roles) {
         User entity = mapper.entity(request);
-
         entity.setEmail(entity.getUsername().toLowerCase()+"@gmail.com");
         entity.setRoles(roles);
-
-        User saved = userRepository.save(entity);
-        return mapper.response(saved);
+        return mapper.response(userRepository.save(entity));
     }
 
-    public UserPromoted promote(UserPromotion request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(()-> new RuntimeException("Only registered users can be promoted"));
-
-        if (user.getRoles().contains(Roles.AGENT)){
-            throw new IllegalStateException("User is already an AGENT");
-        }
-        user.getRoles().add(Roles.AGENT);
-
-        return mapper.promoted(userRepository.save(user));
+    public UserPromoResponse promote(UserPromoRequest request){
+        return userRepository.findByUsername(request.getUsername())
+                .map(user -> {
+                    if (user.getRoles().contains(Roles.AGENT)){
+                        throw new RuntimeException("User is already an AGENT!");
+                    }
+                    user.getRoles().add(Roles.AGENT);
+                    return mapper.promoResponse(userRepository.save(user));
+                })
+                .orElseThrow(() -> new RuntimeException("User Not Found, promote registered users only!"));
     }
-
 
 }

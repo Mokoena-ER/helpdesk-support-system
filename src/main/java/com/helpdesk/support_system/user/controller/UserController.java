@@ -1,7 +1,7 @@
 package com.helpdesk.support_system.user.controller;
 
-import com.helpdesk.support_system.user.dto.UserPromoted;
-import com.helpdesk.support_system.user.dto.UserPromotion;
+import com.helpdesk.support_system.user.dto.UserPromoResponse;
+import com.helpdesk.support_system.user.dto.UserPromoRequest;
 import com.helpdesk.support_system.user.dto.UserRequest;
 import com.helpdesk.support_system.user.dto.UserResponse;
 import com.helpdesk.support_system.user.model.Roles;
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PutMapping("admin/promote")
-    public ResponseEntity<UserPromoted> promoteUser(@RequestBody UserPromotion username) {
+    public ResponseEntity<UserPromoResponse> promoteCustomer(@RequestBody UserPromoRequest username) {
         return ResponseEntity.ok(userService.promote(username));
     }
 

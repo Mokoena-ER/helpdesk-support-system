@@ -1,5 +1,6 @@
 package com.helpdesk.support_system.user.service;
 
+import com.helpdesk.support_system.user.dto.CheckTicketRequest;
 import com.helpdesk.support_system.user.dto.TicketRequest;
 import com.helpdesk.support_system.user.dto.TicketResponse;
 import com.helpdesk.support_system.user.mapper.TicketMapper;
@@ -12,8 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,26 +27,28 @@ public class TicketService {
     private final TicketMapper mapper;
 
     public TicketResponse writeTicket(TicketRequest request) {
-
-        User author = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(()-> new RuntimeException("Only Registered Users can write tickets!"));
-
-        Ticket ticket = mapper.entity(request);
-        ticket.setStatus(Set.of(Status.SUBMITTED));
-        ticket.setCreatedBy(author);
-        Ticket saveTicket = ticketRepository.save(ticket);
-
-        return mapper.response(saveTicket);
-    }
-
-    public TicketResponse write(TicketRequest request) {
         return userRepository.findByUsername(request.getUsername())
                 .map(user -> {
                     Ticket ticket = mapper.entity(request);
                     ticket.setStatus(Set.of(Status.SUBMITTED));
+                    ticket.setCreatedBy(user);
                     return mapper.response(ticketRepository.save(ticket));
                 })
-                .orElseThrow(()-> new RuntimeException("Only Register Users can write tickets!"));
+                .orElseThrow(()-> new RuntimeException("Only Registered Users can write tickets!"));
+    }
+
+    public List<TicketResponse> myTickets(CheckTicketRequest request) {
+        return userRepository.findByUsername(request.getUsername())
+                .map(user -> {
+                    List<Ticket> tickets = ticketRepository.findByCreatedBy(user);
+                    if (tickets.isEmpty()){
+                        throw new RuntimeException("No tickets found under user: '"+user.getUsername()+"'.");
+                    }
+                    return tickets.stream()
+                            .map(mapper::response)
+                            .collect(Collectors.toList());
+                })
+                .orElseThrow(()-> new RuntimeException("User Not Found!"));
     }
 
 }

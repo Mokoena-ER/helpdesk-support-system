@@ -15,6 +15,7 @@ public class TicketResponse {
     private String description;
     private LocalDateTime createdAt;
     private Set<Status> status;
-    private User createdBy;
+//    private User createdBy;
+    private UserResponse author;
 
 }
