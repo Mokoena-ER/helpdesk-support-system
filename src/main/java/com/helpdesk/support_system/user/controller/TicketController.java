@@ -2,6 +2,7 @@ package com.helpdesk.support_system.user.controller;
 
 import com.helpdesk.support_system.user.dto.CheckTicketRequest;
 import com.helpdesk.support_system.user.dto.TicketRequest;
+import com.helpdesk.support_system.user.dto.TicketRequestId;
 import com.helpdesk.support_system.user.dto.TicketResponse;
 import com.helpdesk.support_system.user.service.TicketService;
 import lombok.RequiredArgsConstructor;
@@ -26,4 +27,10 @@ public class TicketController {
     public List<TicketResponse> checkTicket(@RequestBody CheckTicketRequest request) {
         return ticketService.myTickets(request);
     }
+
+    @PutMapping("/attend/{id}")
+    public TicketResponse attendTicket(@RequestBody CheckTicketRequest request, @RequestParam TicketRequestId id){
+        return ticketService.attend(request, id);
+    }
+
 }

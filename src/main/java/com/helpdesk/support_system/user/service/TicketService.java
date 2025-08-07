@@ -2,17 +2,19 @@ package com.helpdesk.support_system.user.service;
 
 import com.helpdesk.support_system.user.dto.CheckTicketRequest;
 import com.helpdesk.support_system.user.dto.TicketRequest;
+import com.helpdesk.support_system.user.dto.TicketRequestId;
 import com.helpdesk.support_system.user.dto.TicketResponse;
 import com.helpdesk.support_system.user.mapper.TicketMapper;
+import com.helpdesk.support_system.user.model.Roles;
 import com.helpdesk.support_system.user.model.Status;
 import com.helpdesk.support_system.user.model.Ticket;
-import com.helpdesk.support_system.user.model.User;
 import com.helpdesk.support_system.user.repo.TicketRepository;
 import com.helpdesk.support_system.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,6 +51,23 @@ public class TicketService {
                             .collect(Collectors.toList());
                 })
                 .orElseThrow(()-> new RuntimeException("User Not Found!"));
+    }
+
+    public TicketResponse attend(CheckTicketRequest request, TicketRequestId requestId) {
+            return userRepository.findByUsername(request.getUsername())
+                    .filter(user -> user.getRoles().contains(Roles.AGENT))
+                    .map(user -> {
+                        Ticket ticket = ticketRepository.findById(requestId.getId())
+                                .orElseThrow(()-> new RuntimeException("No ticket with id: '"+requestId.getId()+"' found."));
+                        if (ticket.getStatus().contains(Status.RESOLVED)){
+                            throw new RuntimeException("This ticket is already attended!");
+                        }
+                        ticket.getStatus().remove(Status.SUBMITTED);
+                        ticket.getStatus().add(Status.RESOLVED);
+                        ticket.setResolvedAt(LocalDateTime.now().withNano(0));
+                        return mapper.response(ticketRepository.save(ticket));
+                    })
+                    .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
 
 }

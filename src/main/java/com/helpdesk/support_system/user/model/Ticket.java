@@ -15,9 +15,14 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String subject;
+
+    @Column(nullable = false)
     private String description;
+
     private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime resolvedAt;
 
     @ElementCollection(targetClass = Status.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
