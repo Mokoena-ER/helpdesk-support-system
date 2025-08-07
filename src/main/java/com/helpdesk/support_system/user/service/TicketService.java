@@ -70,4 +70,14 @@ public class TicketService {
                     .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
 
+    public List<TicketResponse> tickets(){
+        return ticketRepository.findAll().stream()
+                .map(mapper::response)
+                .collect(Collectors.toList());
+    }
+
+    public void clear(){
+        ticketRepository.deleteAll();
+    }
+
 }

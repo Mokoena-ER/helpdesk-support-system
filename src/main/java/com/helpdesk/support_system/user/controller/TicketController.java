@@ -28,9 +28,19 @@ public class TicketController {
         return ticketService.myTickets(request);
     }
 
+    @GetMapping()
+    public ResponseEntity<List<TicketResponse>> viewAllTickets(){
+        return ResponseEntity.ok(ticketService.tickets());
+    }
+
     @PutMapping("/attend/{id}")
     public TicketResponse attendTicket(@RequestBody CheckTicketRequest request, @RequestParam TicketRequestId id){
         return ticketService.attend(request, id);
+    }
+
+    @DeleteMapping("/delete")
+    public void delete(){
+        ticketService.clear();
     }
 
 }

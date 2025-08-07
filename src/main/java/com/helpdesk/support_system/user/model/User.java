@@ -13,19 +13,16 @@ import java.util.Set;
 @Entity
 @Data
 @RequiredArgsConstructor
-public class User {
+public class User extends SoftDeletable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private String email;
 
     private LocalDateTime createdAt = LocalDateTime.now().withNano(0);
@@ -38,7 +35,7 @@ public class User {
     @Column(name = "role", length = 50)
     private Set<Roles> roles = new HashSet<>();
 
-//    @OneToMany(mappedBy = "createdBy")
-//    private List<Ticket> tickets = new ArrayList<>();
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ticket> tickets = new ArrayList<>();
 
 }

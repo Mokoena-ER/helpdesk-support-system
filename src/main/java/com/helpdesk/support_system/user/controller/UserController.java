@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -32,6 +33,17 @@ public class UserController {
     @PutMapping("admin/promote")
     public ResponseEntity<UserPromoResponse> promoteCustomer(@RequestBody UserPromoRequest username) {
         return ResponseEntity.ok(userService.promote(username));
+    }
+
+    @GetMapping("users")
+    public ResponseEntity<List<UserResponse>> users(){
+        return ResponseEntity.ok(userService.users());
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Void> deleteUser(Long id) {
+        userService.softDeleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

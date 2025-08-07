@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -39,6 +41,19 @@ public class UserService {
                     return mapper.promoResponse(userRepository.save(user));
                 })
                 .orElseThrow(() -> new RuntimeException("User Not Found, promote registered users only!"));
+    }
+
+    public void softDeleteUser(Long id){
+        User user = userRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(()-> new RuntimeException("User not found"));
+        user.setDeleted(true);
+        userRepository.save(user);
+    }
+
+    public List<UserResponse> users(){
+        return userRepository.findAllByDeletedFalse().stream()
+                .map(mapper::response)
+                .collect(Collectors.toList());
     }
 
 }
