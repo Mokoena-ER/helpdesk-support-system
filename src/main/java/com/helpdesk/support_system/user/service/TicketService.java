@@ -76,6 +76,13 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
+    public List<TicketResponse> unresolvedTickets() {
+        return ticketRepository.findAll().stream()
+                .filter(ticket -> ticket.getStatus().contains(Status.SUBMITTED))
+                .map(mapper::response)
+                .collect(Collectors.toList());
+    }
+
     public void clear(){
         ticketRepository.deleteAll();
     }

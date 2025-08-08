@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Data
-public class Ticket extends SoftDeletable{
+public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

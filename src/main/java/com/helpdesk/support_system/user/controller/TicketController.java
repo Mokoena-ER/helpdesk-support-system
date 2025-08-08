@@ -33,6 +33,11 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.tickets());
     }
 
+    @GetMapping("/unresolved")
+    public ResponseEntity<List<TicketResponse>> unresolvedTicket() {
+        return ResponseEntity.ok(ticketService.unresolvedTickets());
+    }
+
     @PutMapping("/attend/{id}")
     public TicketResponse attendTicket(@RequestBody CheckTicketRequest request, @RequestParam TicketRequestId id){
         return ticketService.attend(request, id);

@@ -3,6 +3,8 @@ package com.helpdesk.support_system.user.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,8 +14,10 @@ import java.util.Set;
 
 @Entity
 @Data
+@SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 @RequiredArgsConstructor
-public class User extends SoftDeletable{
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +28,9 @@ public class User extends SoftDeletable{
     private String password;
 
     private String email;
+
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 
     private LocalDateTime createdAt = LocalDateTime.now().withNano(0);
 

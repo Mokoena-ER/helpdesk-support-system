@@ -43,15 +43,24 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User Not Found, promote registered users only!"));
     }
 
-    public void softDeleteUser(Long id){
-        User user = userRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(()-> new RuntimeException("User not found"));
-        user.setDeleted(true);
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("User Not Found"));
+        userRepository.delete(user);
+    }
+
+    public void reActivateUser(Long id) {
+        User user = userRepository.findByIdIncludingDeleted(id)
+                .orElseThrow(()-> new RuntimeException("User Not Found"));
+        if (user.getDeleted() == false){
+            throw new RuntimeException("User is Active already!");
+        }
+        user.setDeleted(false);
         userRepository.save(user);
     }
 
     public List<UserResponse> users(){
-        return userRepository.findAllByDeletedFalse().stream()
+        return userRepository.findAll().stream()
                 .map(mapper::response)
                 .collect(Collectors.toList());
     }
