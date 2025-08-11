@@ -11,33 +11,44 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
 @Transactional
 @RequiredArgsConstructor
-@RequestMapping("api/admin/")
+@RequestMapping("api/")
 public class AdminController {
 
     private final UserService userService;
 
-    @PostMapping("auth/register")
+    @PostMapping("admin/auth/register")
     public ResponseEntity<UserResponse> admin(@RequestBody UserRequest request) {
         return ResponseEntity.ok(userService.register(request, Set.of(Roles.ADMIN, Roles.AGENT)));
     }
 
-    @PutMapping("/promote")
+    @PostMapping("agent/login")
+    public String login(UserRequest request) {
+        return userService.verify(request);
+    }
+
+    @GetMapping("agent/users")
+    public ResponseEntity<List<UserResponse>> users(){
+        return ResponseEntity.ok(userService.users());
+    }
+
+    @PutMapping("admin/promote")
     public ResponseEntity<UserPromoResponse> promoteCustomer(@RequestBody UserPromoRequest username) {
         return ResponseEntity.ok(userService.promote(username));
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("admin/delete/{id}")
     public ResponseEntity<Void> deleteUser(Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("re-activate/{id}")
+    @PostMapping("admin/re-activate/{id}")
     public ResponseEntity<Void> reactivateUser(Long id) {
         userService.reActivateUser(id);
         return ResponseEntity.accepted().build();

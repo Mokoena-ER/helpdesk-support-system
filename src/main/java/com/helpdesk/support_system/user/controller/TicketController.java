@@ -28,22 +28,22 @@ public class TicketController {
         return ticketService.myTickets(request);
     }
 
-    @GetMapping()
+    @GetMapping("service/all-tickets")
     public ResponseEntity<List<TicketResponse>> viewAllTickets(){
         return ResponseEntity.ok(ticketService.tickets());
     }
 
-    @GetMapping("/unresolved")
+    @GetMapping("service/unresolved")
     public ResponseEntity<List<TicketResponse>> unresolvedTicket() {
         return ResponseEntity.ok(ticketService.unresolvedTickets());
     }
 
-    @PutMapping("/attend/{id}")
+    @PutMapping("service/attend/{id}")
     public TicketResponse attendTicket(@RequestBody CheckTicketRequest request, @RequestParam TicketRequestId id){
         return ticketService.attend(request, id);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("service/delete")
     public void delete(){
         ticketService.clear();
     }
