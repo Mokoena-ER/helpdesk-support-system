@@ -7,7 +7,7 @@ A simple Spring Boot-based helpdesk support system that manages users, roles, an
 ## 🚀 Features
 
 - 🔐 **User Registration** (User/Admin)
-- 👮 **Role-Based Access Control** (`USER`, `ADMIN`, `AGENT`)
+- 👮 **Role-Based Access Control** (`CUSTOMER`, `ADMIN`, `AGENT`)
 - 🔁 **Admin Can Promote Users to Agent**
 - 🧾 API Endpoints secured by roles
 - ✅ Basic validation & request handling
